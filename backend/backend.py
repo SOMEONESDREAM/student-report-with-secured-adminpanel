@@ -6,7 +6,8 @@ import os
 from fastapi import FastAPI, UploadFile, File
 import shutil
 import zipfile
-from backend.admin_routes import router as admin_router  # اگر فایل بالا رو backend/admin_routes.py ساختی
+from .admin_routes import router as admin_router
+  
 
 app = FastAPI()
 
