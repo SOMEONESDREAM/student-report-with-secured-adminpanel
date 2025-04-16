@@ -6,7 +6,7 @@ import os
 from fastapi import FastAPI, UploadFile, File
 import shutil
 import zipfile
-from .admin_routes import router as admin_router
+from admin_routes import router as admin_router
   
 
 app = FastAPI()
