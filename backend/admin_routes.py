@@ -5,36 +5,26 @@ import zipfile
 
 router = APIRouter()
 
+UPLOAD_FOLDER = "backend/images/"
 EXCEL_PATH = "backend/data/data.xlsx"
-IMAGES_PATH = "backend/images"
 
-@router.post("/upload-excel")
+@router.post("/upload-excel/")
 async def upload_excel(file: UploadFile = File(...)):
-    # حذف فایل قبلی
     if os.path.exists(EXCEL_PATH):
         os.remove(EXCEL_PATH)
+    with open(EXCEL_PATH, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    return {"message": "Excel file uploaded successfully"}
 
-    # ذخیره فایل جدید
-    with open(EXCEL_PATH, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    
-    return {"message": "Excel file uploaded successfully."}
-
-@router.post("/upload-zip")
+@router.post("/upload-zip/")
 async def upload_zip(file: UploadFile = File(...)):
-    # حذف عکس‌های قبلی
-    if os.path.exists(IMAGES_PATH):
-        shutil.rmtree(IMAGES_PATH)
-    os.makedirs(IMAGES_PATH)
-
-    # ذخیره فایل زیپ موقتی
-    temp_zip_path = "temp.zip"
-    with open(temp_zip_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    # استخراج فایل زیپ
-    with zipfile.ZipFile(temp_zip_path, 'r') as zip_ref:
-        zip_ref.extractall(IMAGES_PATH)
-
-    os.remove(temp_zip_path)
-    return {"message": "Zip file extracted successfully."}
+    if os.path.exists(UPLOAD_FOLDER):
+        shutil.rmtree(UPLOAD_FOLDER)
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    zip_path = "temp.zip"
+    with open(zip_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(UPLOAD_FOLDER)
+    os.remove(zip_path)
+    return {"message": "Images uploaded and extracted successfully"}
