@@ -1,82 +1,83 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-function AdminUploadPanel() {
+const AdminPage = () => {
+  const [auth, setAuth] = useState(false);
+  const [password, setPassword] = useState("");
   const [excelFile, setExcelFile] = useState(null);
   const [zipFile, setZipFile] = useState(null);
   const [message, setMessage] = useState("");
 
-  const handleExcelUpload = async () => {
-    if (!excelFile) {
-      setMessage("لطفاً یک فایل اکسل انتخاب کنید.");
-      return;
-    }
+  const correctPassword = "admin123"; // رمز ساده (می‌تونی بعداً پیشرفته‌ترش کنی)
 
+  const handleLogin = () => {
+    if (password === correctPassword) {
+      setAuth(true);
+    } else {
+      alert("رمز اشتباه است!");
+    }
+  };
+
+  const handleExcelUpload = async () => {
+    if (!excelFile) return;
     const formData = new FormData();
     formData.append("file", excelFile);
 
     try {
-      await axios.post(
-        "https://student-report-backend.onrender.com/upload-excel/",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      setMessage("فایل اکسل با موفقیت آپلود شد.");
+      await axios.post("https://student-report-backend.onrender.com/upload-excel/", formData);
+      setMessage("فایل اکسل با موفقیت آپلود شد");
     } catch (error) {
-      setMessage("خطا در آپلود فایل اکسل.");
+      setMessage("خطا در آپلود فایل اکسل");
     }
   };
 
   const handleZipUpload = async () => {
-    if (!zipFile) {
-      setMessage("لطفاً یک فایل ZIP انتخاب کنید.");
-      return;
-    }
-
+    if (!zipFile) return;
     const formData = new FormData();
     formData.append("file", zipFile);
 
     try {
-      await axios.post(
-        "https://student-report-backend.onrender.com/upload-images/",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      setMessage("فایل تصاویر با موفقیت آپلود و استخراج شد.");
+      await axios.post("https://student-report-backend.onrender.com/upload-images/", formData);
+      setMessage("فایل زیپ با موفقیت آپلود شد");
     } catch (error) {
-      setMessage("خطا در آپلود فایل زیپ تصاویر.");
+      setMessage("خطا در آپلود فایل زیپ");
     }
   };
 
-  return (
-    <div style={{ marginTop: "1rem" }}>
-      <h4>آپلود فایل اکسل</h4>
-      <input
-        type="file"
-        accept=".xlsx"
-        onChange={(e) => setExcelFile(e.target.files[0])}
-      />
-      <button onClick={handleExcelUpload} style={{ margin: "0.5rem" }}>
-        آپلود اکسل
-      </button>
+  if (!auth) {
+    return (
+      <div style={{ padding: "2rem" }}>
+        <h2>ورود ادمین</h2>
+        <input
+          type="password"
+          placeholder="رمز عبور"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button onClick={handleLogin}>ورود</button>
+      </div>
+    );
+  }
 
-      <h4>آپلود فایل ZIP تصاویر</h4>
-      <input
-        type="file"
-        accept=".zip"
-        onChange={(e) => setZipFile(e.target.files[0])}
-      />
-      <button onClick={handleZipUpload} style={{ margin: "0.5rem" }}>
-        آپلود تصاویر
-      </button>
+  return (
+    <div style={{ padding: "2rem" }}>
+      <h2>پنل ادمین</h2>
+
+      <div>
+        <h3>آپلود فایل اکسل</h3>
+        <input type="file" accept=".xlsx" onChange={(e) => setExcelFile(e.target.files[0])} />
+        <button onClick={handleExcelUpload}>آپلود اکسل</button>
+      </div>
+
+      <div style={{ marginTop: "2rem" }}>
+        <h3>آپلود فایل زیپ کارنامه‌ها</h3>
+        <input type="file" accept=".zip" onChange={(e) => setZipFile(e.target.files[0])} />
+        <button onClick={handleZipUpload}>آپلود زیپ</button>
+      </div>
 
       {message && <p style={{ marginTop: "1rem", color: "green" }}>{message}</p>}
     </div>
   );
-}
+};
 
-export default AdminUploadPanel;
+export default AdminPage;
