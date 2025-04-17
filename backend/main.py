@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import os
 
-from backend.admin_routes import router as admin_router  # اگر مسیرت backend/admin_routes.py هست
+from admin_routes import router as admin_router  # اگر مسیرت backend/admin_routes.py هست
 
 app = FastAPI()
 
