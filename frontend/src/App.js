@@ -1,57 +1,65 @@
-import { useState } from "react";
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import AdminUploadPanel from './AdminUploadPanel';
 
-
 function App() {
-  const [code, setCode] = useState("");
-  const [imageUrl, setImageUrl] = useState(null);
+  const [code, setCode] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [error, setError] = useState('');
 
-  const handleFetchImage = async () => {
-    if (!code) return;
+  const handleSearch = async () => {
     try {
-      const response = await fetch(`https://student-report-0rfh.onrender.com/get-image/${code}`);
-
-      if (response.ok) {
-        const timestamp = new Date().getTime();
-        setImageUrl(`${response.url}?t=${timestamp}`); // جلوگیری از کش شدن
-      } else {
-        setImageUrl(null);
-        alert("کد ملی وارد شده صحیح نمی باشد.");
-      }
-    } catch (error) {
-      console.error("خطا در دریافت کارنامه:", error);
-      alert("مشکلی پیش آمد، لطفاً دوباره امتحان کنید.");
+      const response = await axios.get(
+        `https://student-report-backend.onrender.com/get-image/${code}`
+      );
+      setImageUrl(response.request.responseURL);
+      setError('');
+    } catch (err) {
+      setImageUrl('');
+      setError('کدی با این مشخصات پیدا نشد یا تصویری وجود ندارد.');
     }
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px", fontFamily: "sans-serif" }}>
-      <h1>جستجوی کارنامه</h1>
+    <div style={{ direction: 'rtl', textAlign: 'center', marginTop: '50px' }}>
+      <h1>سامانه مشاهده کارنامه</h1>
       <input
         type="text"
+        placeholder="کد را وارد کنید"
         value={code}
         onChange={(e) => setCode(e.target.value)}
-        placeholder="کد ملی را وارد کنید."
-        style={{ padding: "10px", fontSize: "16px", width: "200px" }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') handleSearch();
+        }}
+        style={{ padding: '10px', fontSize: '16px', width: '300px' }}
       />
       <button
-        onClick={handleFetchImage}
-        style={{ marginLeft: "10px", padding: "10px 20px", fontSize: "16px" }}
+        onClick={handleSearch}
+        style={{
+          padding: '10px 20px',
+          marginRight: '10px',
+          fontSize: '16px',
+          cursor: 'pointer',
+        }}
       >
         جستجو
       </button>
 
+      {error && <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>}
       {imageUrl && (
-        <div style={{ marginTop: "30px" }}>
-          <h3> </h3>
+        <div style={{ marginTop: '20px' }}>
           <img
             src={imageUrl}
-            alt="Result"
-            style={{ maxWidth: "90%", maxHeight: "400px", border: "1px solid #ccc", borderRadius: "10px" }}
+            alt="کارنامه"
+            style={{ width: '80%', maxWidth: '600px', border: '1px solid #ccc' }}
           />
         </div>
       )}
+
+      <hr style={{ margin: '40px auto', width: '80%' }} />
+
+      {/* 👇 پنل مدیریت برای آپلود فایل اکسل و فایل زیپ تصاویر */}
+      <AdminUploadPanel />
     </div>
   );
 }
