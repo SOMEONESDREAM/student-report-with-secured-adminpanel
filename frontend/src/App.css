@@ -1,38 +1,69 @@
-.App {
-  text-align: center;
+import React, { useState } from "react";
+import axios from "axios";
+import AdminUploadPanel from "./AdminUploadPanel";
+
+function App() {
+  const [code, setCode] = useState("");
+  const [imageSrc, setImageSrc] = useState(null);
+  const [error, setError] = useState("");
+
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(
+        `https://student-report-backend.onrender.com/get-image/${code}`
+      );
+      setImageSrc(response.request.responseURL);
+      setError("");
+    } catch (err) {
+      setImageSrc(null);
+      if (err.response?.data?.detail) {
+        setError(err.response.data.detail);
+      } else {
+        setError("An error occurred.");
+      }
+    }
+  };
+
+  return (
+    <div style={{ fontFamily: "Arial, sans-serif", padding: "2rem" }}>
+      <h1>سامانه نمایش کارنامه</h1>
+
+      <div style={{ marginBottom: "2rem" }}>
+        <input
+          type="text"
+          placeholder="کد دانش‌آموز را وارد کنید"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          style={{
+            padding: "0.5rem",
+            fontSize: "1rem",
+            marginRight: "1rem",
+          }}
+        />
+        <button onClick={handleSearch} style={{ padding: "0.5rem 1rem" }}>
+          جستجو
+        </button>
+      </div>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {imageSrc && (
+        <div>
+          <h3>کارنامه شما:</h3>
+          <img
+            src={imageSrc}
+            alt="کارنامه"
+            style={{ maxWidth: "100%", height: "auto" }}
+          />
+        </div>
+      )}
+
+      <hr style={{ margin: "2rem 0" }} />
+
+      <h2>پنل ادمین</h2>
+      <AdminUploadPanel />
+    </div>
+  );
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+export default App;
