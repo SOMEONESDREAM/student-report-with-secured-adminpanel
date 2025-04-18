@@ -14,7 +14,7 @@ function AdminUploadPanel() {
 
     try {
       await axios.post(
-        "https://report-with-admin-panel-1.onrender.com/upload-excel/",
+        "https://report-with-admin-panel.onrender.com/upload-excel/",
         formData
       );
       setMessage("فایل اکسل با موفقیت آپلود شد.");
@@ -31,7 +31,7 @@ function AdminUploadPanel() {
 
     try {
       await axios.post(
-        "https://report-with-admin-panel-1.onrender.com/upload-images/",
+        "https://report-with-admin-panel.onrender.com/upload-images/",
         formData
       );
       setMessage("فایل تصاویر با موفقیت آپلود شد.");
