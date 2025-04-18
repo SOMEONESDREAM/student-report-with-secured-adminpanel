@@ -6,9 +6,9 @@ import zipfile
 router = APIRouter()
 
 # مسیرها
-EXCEL_PATH = "backend/data/data.xlsx"
-IMAGES_DIR = "backend/images"
-ZIP_PATH = "backend/temp_images.zip"
+EXCEL_PATH = "data.xlsx"
+IMAGES_DIR = "images"
+ZIP_PATH = "temp_images.zip"
 
 @router.post("/upload-excel/")
 async def upload_excel(file: UploadFile = File(...)):
