@@ -9,7 +9,7 @@ function StudentSearch() {
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `https://student-report-backend.onrender.com/get-image/${code}`
+        `https://report-with-admin-panel-1.onrender.com/get-image/${code}`
       );
       setImageUrl(response.data);
       setError("");
