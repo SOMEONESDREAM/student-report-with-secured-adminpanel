@@ -1,58 +1,43 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const StudentSearch = () => {
+function StudentSearch() {
   const [code, setCode] = useState("");
-  const [imageUrl, setImageUrl] = useState(null);
-  const [error, setError] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [error, setError] = useState("");
 
   const handleSearch = async () => {
-    if (!code) {
-      setError("لطفاً کد را وارد کنید.");
-      setImageUrl(null);
-      return;
-    }
-
     try {
       const response = await axios.get(
         `https://student-report-backend.onrender.com/get-image/${code}`
       );
-      const blob = new Blob([response.data], { type: "image/jpeg" });
-      const url = URL.createObjectURL(blob);
-      setImageUrl(`https://student-report-backend.onrender.com/get-image/${code}`);
-      setError(null);
+      setImageUrl(response.data);
+      setError("");
     } catch (err) {
-      setImageUrl(null);
-      setError("کدی با این مشخصات یافت نشد یا تصویر موجود نیست.");
+      setError("کارنامه‌ای برای این کد یافت نشد.");
+      setImageUrl("");
     }
   };
 
   return (
-    <div className="text-center p-4">
-      <h2 className="text-2xl font-semibold mb-4">مشاهده کارنامه دانش‌آموز</h2>
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h1>دریافت کارنامه دانش‌آموز</h1>
       <input
         type="text"
-        placeholder="کد دانش‌آموز را وارد کنید"
-        className="p-2 border rounded w-64"
         value={code}
         onChange={(e) => setCode(e.target.value)}
+        placeholder="کد دانش‌آموز را وارد کنید"
+        style={{ padding: "0.5rem", margin: "1rem", fontSize: "1rem" }}
       />
-      <button
-        onClick={handleSearch}
-        className="ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        جستجو
-      </button>
-
-      {error && <p className="text-red-500 mt-4">{error}</p>}
-
+      <button onClick={handleSearch}>جستجو</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {imageUrl && (
-        <div className="mt-6">
-          <img src={imageUrl} alt="Student Report" className="max-w-full mx-auto" />
+        <div>
+          <img src={imageUrl} alt="کارنامه" style={{ marginTop: "2rem", maxWidth: "90%" }} />
         </div>
       )}
     </div>
   );
-};
+}
 
 export default StudentSearch;
