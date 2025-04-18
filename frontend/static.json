@@ -1,11 +1,5 @@
 {
-    "headers": {
-      "/**": {
-        "Access-Control-Allow-Origin": "*"
-      }
-    },
-    "routes": {
-      "/**": "index.html"
-    }
+  "routes": {
+    "/**": "index.html"
   }
-  
+}
