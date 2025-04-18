@@ -22,7 +22,7 @@ app.add_middleware(
 
 # مسیر فایل‌ها
 EXCEL_PATH = "data.xlsx"
-IMAGES_FOLDER = "backend/images"
+IMAGES_FOLDER = "images"
 
 @app.get("/")
 def read_root():
