@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 
 function StudentSearch() {
   const [code, setCode] = useState("");
@@ -7,15 +6,25 @@ function StudentSearch() {
   const [error, setError] = useState("");
 
   const handleSearch = async () => {
+    if (!code.trim()) {
+      setError("لطفاً یک کد وارد کنید.");
+      setImageUrl("");
+      return;
+    }
+
+    const url = `https://report-with-admin-panel.onrender.com/get-image/${code}`;
+
     try {
-      const response = await axios.get(
-        `https://report-with-admin-panel.onrender.com/get-image/${code}`
-      );
-      setImageUrl(response.data);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Not found");
+      }
+
+      setImageUrl(url);
       setError("");
     } catch (err) {
-      setError("کارنامه‌ای برای این کد یافت نشد.");
       setImageUrl("");
+      setError("کارنامه‌ای برای این کد یافت نشد.");
     }
   };
 
@@ -30,10 +39,14 @@ function StudentSearch() {
         style={{ padding: "0.5rem", margin: "1rem", fontSize: "1rem" }}
       />
       <button onClick={handleSearch}>جستجو</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: "red", marginTop: "1rem" }}>{error}</p>}
       {imageUrl && (
         <div>
-          <img src={imageUrl} alt="کارنامه" style={{ marginTop: "2rem", maxWidth: "90%" }} />
+          <img
+            src={imageUrl}
+            alt="کارنامه"
+            style={{ marginTop: "2rem", maxWidth: "90%" }}
+          />
         </div>
       )}
     </div>
