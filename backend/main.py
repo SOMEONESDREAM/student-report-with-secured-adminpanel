@@ -21,7 +21,7 @@ app.add_middleware(
 )
 
 # مسیر فایل‌ها
-EXCEL_PATH = "backend/data.xlsx"
+EXCEL_PATH = "data.xlsx"
 IMAGES_FOLDER = "backend/images"
 
 @app.get("/")
