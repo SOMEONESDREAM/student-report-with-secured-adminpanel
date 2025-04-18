@@ -14,7 +14,7 @@ app.include_router(admin_router)
 # فعال کردن CORS برای فرانت‌اند روی رندر
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://student-report-frontend-static.onrender.com"],
+    allow_origins=["https://student-report-1.netlify.app/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
