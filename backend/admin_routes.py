@@ -17,7 +17,6 @@ async def upload_excel(file: UploadFile = File(...)):
         os.remove(EXCEL_PATH)
 
     # ذخیره فایل جدید
-    os.makedirs(os.path.dirname(EXCEL_PATH), exist_ok=True)
     with open(EXCEL_PATH, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
