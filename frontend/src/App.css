@@ -31,7 +31,7 @@ function App() {
       <div style={{ marginBottom: "2rem" }}>
         <input
           type="text"
-          placeholder="کد دانش‌آموز را وارد کنید"
+          placeholder="کد ملی را وارد کنید."
           value={code}
           onChange={(e) => setCode(e.target.value)}
           style={{

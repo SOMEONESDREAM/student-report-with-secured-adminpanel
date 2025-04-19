@@ -7,7 +7,7 @@ function StudentSearch() {
 
   const handleSearch = async () => {
     if (!code.trim()) {
-      setError("لطفاً یک کد وارد کنید.");
+      setError("کد ملی را وارد کنید.");
       setImageUrl("");
       return;
     }
@@ -24,18 +24,18 @@ function StudentSearch() {
       setError("");
     } catch (err) {
       setImageUrl("");
-      setError("کارنامه‌ای برای این کد یافت نشد.");
+      setError("کارنامه‌ای برای این کدملی یافت نشد.");
     }
   };
 
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>دریافت کارنامه دانش‌آموز</h1>
+      <h1>دریافت کارنامه</h1>
       <input
         type="text"
         value={code}
         onChange={(e) => setCode(e.target.value)}
-        placeholder="کد دانش‌آموز را وارد کنید"
+        placeholder="  کد ملی را وارد کنید."
         style={{ padding: "0.5rem", margin: "1rem", fontSize: "1rem" }}
       />
       <button onClick={handleSearch}>جستجو</button>
@@ -54,3 +54,4 @@ function StudentSearch() {
 }
 
 export default StudentSearch;
+سسس
