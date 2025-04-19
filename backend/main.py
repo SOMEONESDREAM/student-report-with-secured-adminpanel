@@ -8,8 +8,7 @@ from admin_routes import router as admin_router  # اگر مسیرت backend/adm
 
 app = FastAPI()
 
-# اضافه کردن روت‌های مربوط به پنل ادمین
-app.include_router(admin_router)
+
 
 # فعال کردن CORS برای فرانت‌اند روی رندر
 app.add_middleware(
@@ -20,6 +19,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# اضافه کردن روت‌های مربوط به پنل ادمین
+app.include_router(admin_router)
 
 # مسیر فایل‌ها
 EXCEL_PATH = "data.xlsx"
