@@ -13,8 +13,8 @@ app = FastAPI()
 # فعال کردن CORS برای فرانت‌اند روی رندر
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://student-report-1.netlify.app",
-                   "https://student-report-1.netlify.app/admin",],
+    allow_origins=["https://student-report-secured-adminpanel.netlify.app",
+                   "https://student-report-secured-adminpanel.netlify.app/admin",],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
