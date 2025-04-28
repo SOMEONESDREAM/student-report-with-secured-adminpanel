@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import AdminLoginPage from "./AdminLoginPage";
 import AdminUploadPanel from "./AdminUploadPanel";
 
 function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("admin_token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>پنل مدیریت</h2>
-      <AdminUploadPanel />
+    <div>
+      {isAuthenticated ? (
+        <AdminUploadPanel />
+      ) : (
+        <AdminLoginPage onLoginSuccess={() => setIsAuthenticated(true)} />
+      )}
     </div>
   );
 }
