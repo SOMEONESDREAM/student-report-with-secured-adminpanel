@@ -13,7 +13,7 @@ IMAGES_DIR = "images"
 ZIP_PATH = "temp_images.zip"
 
 # اطلاعات ورود
-ADMIN_PASSWORD = "your_password_here"  # اینجا پسورد دلخواهت رو بذار
+ADMIN_PASSWORD = "milad123"  # اینجا پسورد دلخواهت رو بذار
 ACCESS_TOKEN = None
 TOKEN_EXPIRE_TIME = None
 
