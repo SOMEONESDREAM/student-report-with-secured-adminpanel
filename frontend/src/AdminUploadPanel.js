@@ -15,7 +15,7 @@ function AdminUploadPanel() {
 
     try {
       const response = await axios.post(
-        "https://report-with-admin-panel.onrender.com/upload-excel/",
+        "https://student-report-with-secured-adminpanel.onrender.com/upload-excel/",
         formData
       );
       setMessage(response.data.message);

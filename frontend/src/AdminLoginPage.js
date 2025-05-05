@@ -8,7 +8,7 @@ function AdminLoginPage({ onLoginSuccess }) {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "https://report-with-admin-panel.onrender.com/login/",
+        "https://student-report-with-secured-adminpanel.onrender.com/login/",
         new URLSearchParams({ password })
       );
       const token = response.data.access_token;
