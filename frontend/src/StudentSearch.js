@@ -12,7 +12,7 @@ function StudentSearch() {
       return;
     }
 
-    const url = `https://report-with-admin-panel.onrender.com/get-image/${code}`;
+    const url = `https://student-report-with-secured-adminpanel.onrender.com/get-image/${code}`;
 
     try {
       const response = await fetch(url);
