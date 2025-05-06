@@ -4,7 +4,6 @@ import StudentSearch from "./StudentSearch";
 import AdminPage from "./AdminPage";
 
 function App() {
-  console.log("Refresh render");
   return (
     <Router>
       <Routes>

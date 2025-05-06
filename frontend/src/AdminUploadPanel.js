@@ -1,78 +1,46 @@
 import React, { useState } from "react";
-import axios from "axios";
 
 function AdminUploadPanel() {
   const [excelFile, setExcelFile] = useState(null);
   const [zipFile, setZipFile] = useState(null);
-  const [message, setMessage] = useState("");
 
-  const handleUploadExcel = async () => {
-    if (!excelFile) return;
-
+  const handleExcelUpload = async () => {
     const formData = new FormData();
     formData.append("file", excelFile);
-    formData.append("token", localStorage.getItem("admin_token"));
 
-    try {
-      const response = await axios.post(
-        "https://student-report-with-secured-adminpanel.onrender.com/upload-excel/",
-        formData
-      );
-      setMessage(response.data.message);
-    } catch (error) {
-      setMessage("خطا در آپلود فایل اکسل");
-    }
+    const response = await fetch("https://report-with-admin-panel.onrender.com/admin/upload-excel/", {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    alert(data.message || "Upload failed");
   };
 
-  const handleUploadImages = async () => {
-    if (!zipFile) return;
-
+  const handleZipUpload = async () => {
     const formData = new FormData();
     formData.append("file", zipFile);
-    formData.append("token", localStorage.getItem("admin_token"));
 
-    try {
-      const response = await axios.post(
-        "https://report-with-admin-panel.onrender.com/upload-images/",
-        formData
-      );
-      setMessage(response.data.message);
-    } catch (error) {
-      setMessage("خطا در آپلود تصاویر");
-    }
+    const response = await fetch("https://report-with-admin-panel.onrender.com/admin/upload-images/", {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    alert(data.message || "Upload failed");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-2xl mb-4">آپلود فایل‌ها</h1>
+    <div>
+      <h3>Upload Excel</h3>
+      <input type="file" onChange={(e) => setExcelFile(e.target.files[0])} />
+      <button onClick={handleExcelUpload}>Upload Excel</button>
 
-      <input
-        type="file"
-        accept=".xlsx"
-        onChange={(e) => setExcelFile(e.target.files[0])}
-        className="mb-2"
-      />
-      <button
-        onClick={handleUploadExcel}
-        className="p-2 bg-green-500 text-white rounded mb-4 w-64"
-      >
-        آپلود اکسل
-      </button>
-
-      <input
-        type="file"
-        accept=".zip"
-        onChange={(e) => setZipFile(e.target.files[0])}
-        className="mb-2"
-      />
-      <button
-        onClick={handleUploadImages}
-        className="p-2 bg-green-500 text-white rounded mb-4 w-64"
-      >
-        آپلود تصاویر
-      </button>
-
-      {message && <p className="text-blue-600 mt-4">{message}</p>}
+      <h3>Upload ZIP of Images</h3>
+      <input type="file" onChange={(e) => setZipFile(e.target.files[0])} />
+      <button onClick={handleZipUpload}>Upload Images</button>
     </div>
   );
 }

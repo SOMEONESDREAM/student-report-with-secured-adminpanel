@@ -4,26 +4,20 @@ from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import os
 
-from admin_routes import router as admin_router  # اگر مسیرت backend/admin_routes.py هست
+from admin_routes import router as admin_router
 
 app = FastAPI()
 
-
-
-# فعال کردن CORS برای فرانت‌اند روی رندر
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://student-report-secured-adminpanel.netlify.app",
-                   "https://student-report-secured-adminpanel.netlify.app/admin",],
+    allow_origins=["https://student-report-secured-adminpanel.netlify.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# اضافه کردن روت‌های مربوط به پنل ادمین
 app.include_router(admin_router)
 
-# مسیر فایل‌ها
 EXCEL_PATH = "data.xlsx"
 IMAGES_FOLDER = "images"
 
