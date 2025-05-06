@@ -7,7 +7,7 @@ function AdminPage() {
   const [loginError, setLoginError] = useState("");
 
   const checkAuth = async () => {
-    const response = await fetch("https://report-with-admin-panel.onrender.com/admin/check-auth", {
+    const response = await fetch("https://student-report-with-secured-adminpanel.onrender.com//admin/check-auth", {
       credentials: "include",
     });
 
