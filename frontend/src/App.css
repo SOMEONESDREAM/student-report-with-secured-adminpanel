@@ -10,7 +10,7 @@ function App() {
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `https://student-report-backend.onrender.com/get-image/${code}`
+        `https://student-report-with-secured-adminpanel.onrender.com/get-image/${code}`
       );
       setImageSrc(response.request.responseURL);
       setError("");

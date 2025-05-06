@@ -8,7 +8,7 @@ function AdminUploadPanel() {
     const formData = new FormData();
     formData.append("file", excelFile);
 
-    const response = await fetch("https://report-with-admin-panel.onrender.com/admin/upload-excel/", {
+    const response = await fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/upload-excel/", {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -22,7 +22,7 @@ function AdminUploadPanel() {
     const formData = new FormData();
     formData.append("file", zipFile);
 
-    const response = await fetch("https://report-with-admin-panel.onrender.com/admin/upload-images/", {
+    const response = await fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/upload-images/", {
       method: "POST",
       body: formData,
       credentials: "include",
