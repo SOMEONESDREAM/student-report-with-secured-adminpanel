@@ -1,65 +1,81 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Form, Response, Request
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form, Request, Response
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 import zipfile
 from datetime import datetime, timedelta
-import secrets
 
 router = APIRouter()
 
+# مسیر فایل‌ها
 EXCEL_PATH = "data.xlsx"
 IMAGES_DIR = "images"
 ZIP_PATH = "temp_images.zip"
 
+# اطلاعات احراز هویت
 ADMIN_PASSWORD = "milad123"
-ACCESS_TOKEN = None
+ACCESS_TOKEN = "my_secure_token"
 TOKEN_EXPIRE_TIME = None
-LOGIN_ATTEMPTS = {}  # {ip_address: [timestamps]}
-RATE_LIMIT_TIME = timedelta(minutes=5)
+
+# لاگ تلاش‌های ورود
+FAILED_LOGIN_ATTEMPTS = []
 MAX_ATTEMPTS = 5
+BLOCK_DURATION_MINUTES = 5
 
-@router.post("/login/")
-async def login(response: Response, request: Request, password: str = Form(...)):
-    global ACCESS_TOKEN, TOKEN_EXPIRE_TIME
-    
-    client_ip = request.client.host
+def clean_old_attempts():
+    global FAILED_LOGIN_ATTEMPTS
     now = datetime.utcnow()
+    FAILED_LOGIN_ATTEMPTS = [t for t in FAILED_LOGIN_ATTEMPTS if now - t < timedelta(minutes=BLOCK_DURATION_MINUTES)]
 
-    # پاک‌سازی تلاش‌های منقضی‌شده
-    LOGIN_ATTEMPTS.setdefault(client_ip, [])
-    LOGIN_ATTEMPTS[client_ip] = [ts for ts in LOGIN_ATTEMPTS[client_ip] if now - ts < RATE_LIMIT_TIME]
+def is_blocked():
+    clean_old_attempts()
+    return len(FAILED_LOGIN_ATTEMPTS) >= MAX_ATTEMPTS
 
-    if len(LOGIN_ATTEMPTS[client_ip]) >= MAX_ATTEMPTS:
-        raise HTTPException(status_code=429, detail="Too many login attempts. Please try again later.")
-
-    if password == ADMIN_PASSWORD:
-        token = secrets.token_hex(16)
-        ACCESS_TOKEN = token
-        TOKEN_EXPIRE_TIME = now + timedelta(minutes=30)
-        response.set_cookie(
-            key="access_token",
-            value=token,
-            httponly=True,
-            max_age=1800,
-            samesite="Strict",
-            secure=True
-        )
-        return {"message": "Login successful"}
-    else:
-        LOGIN_ATTEMPTS[client_ip].append(now)
-        raise HTTPException(status_code=401, detail="Invalid password")
-
-def verify_token(request: Request):
-    global ACCESS_TOKEN, TOKEN_EXPIRE_TIME
-    token = request.cookies.get("access_token")
-    if not token or token != ACCESS_TOKEN or datetime.utcnow() > TOKEN_EXPIRE_TIME:
+def verify_token(token: str):
+    global TOKEN_EXPIRE_TIME
+    if token != ACCESS_TOKEN or not TOKEN_EXPIRE_TIME or datetime.utcnow() > TOKEN_EXPIRE_TIME:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
+@router.post("/login/")
+async def login(password: str = Form(...), response: Response = None):
+    global TOKEN_EXPIRE_TIME
+
+    if is_blocked():
+        raise HTTPException(status_code=429, detail="Too many failed attempts. Try again later.")
+
+    if password != ADMIN_PASSWORD:
+        FAILED_LOGIN_ATTEMPTS.append(datetime.utcnow())
+        raise HTTPException(status_code=401, detail="Invalid password")
+
+    # موفقیت‌آمیز: تنظیم توکن و پاک کردن تلاش‌های قبلی
+    FAILED_LOGIN_ATTEMPTS.clear()
+    TOKEN_EXPIRE_TIME = datetime.utcnow() + timedelta(minutes=30)
+
+    # تنظیم کوکی HttpOnly
+    response.set_cookie(
+        key="access_token",
+        value=ACCESS_TOKEN,
+        httponly=True,
+        samesite="strict",
+        secure=True,  # اگر https فعال است
+        max_age=1800
+    )
+
+    return {"message": "Login successful"}
+
+@router.get("/check-auth")
+async def check_auth(request: Request):
+    token = request.cookies.get("access_token")
+    try:
+        verify_token(token)
+        return {"status": "authenticated"}
+    except HTTPException:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
 @router.post("/upload-excel/")
-async def upload_excel(request: Request, file: UploadFile = File(...)):
-    verify_token(request)
+async def upload_excel(file: UploadFile = File(...), request: Request = None):
+    token = request.cookies.get("access_token")
+    verify_token(token)
 
     if os.path.exists(EXCEL_PATH):
         os.remove(EXCEL_PATH)
@@ -70,27 +86,23 @@ async def upload_excel(request: Request, file: UploadFile = File(...)):
     return {"message": "Excel file uploaded successfully"}
 
 @router.post("/upload-images/")
-async def upload_zip(request: Request, file: UploadFile = File(...)):
-    verify_token(request)
+async def upload_zip(file: UploadFile = File(...), request: Request = None):
+    token = request.cookies.get("access_token")
+    verify_token(token)
 
+    # حذف پوشه قبلی تصاویر
     if os.path.exists(IMAGES_DIR):
         shutil.rmtree(IMAGES_DIR)
     os.makedirs(IMAGES_DIR, exist_ok=True)
 
+    # ذخیره فایل زیپ موقت
     with open(ZIP_PATH, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+    # استخراج تصاویر
     with zipfile.ZipFile(ZIP_PATH, "r") as zip_ref:
         zip_ref.extractall(IMAGES_DIR)
 
     os.remove(ZIP_PATH)
 
     return {"message": "Images uploaded and extracted successfully"}
-
-@router.get("/logout/")
-async def logout(response: Response):
-    global ACCESS_TOKEN, TOKEN_EXPIRE_TIME
-    ACCESS_TOKEN = None
-    TOKEN_EXPIRE_TIME = None
-    response.delete_cookie("access_token")
-    return {"message": "Logged out successfully"}
