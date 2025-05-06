@@ -16,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(admin_router)
+app.include_router(admin_router, prefix="/admin")
 
 EXCEL_PATH = "data.xlsx"
 IMAGES_FOLDER = "images"

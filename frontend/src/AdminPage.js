@@ -26,7 +26,7 @@ function AdminPage() {
     const formData = new FormData();
     formData.append("password", password);
 
-    const response = await fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/login/", {
+    const response = await fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/login", {
       method: "POST",
       body: formData,
       credentials: "include", // very important for HttpOnly cookie
