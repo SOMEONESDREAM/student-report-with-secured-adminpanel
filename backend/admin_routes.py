@@ -56,7 +56,7 @@ async def login(password: str = Form(...), response: Response = None):
         key="access_token",
         value=ACCESS_TOKEN,
         httponly=True,
-        samesite="strict",
+        samesite="none",
         secure=True,  # اگر https فعال است
         max_age=1800
     )
@@ -65,12 +65,11 @@ async def login(password: str = Form(...), response: Response = None):
 
 @router.get("/check-auth")
 async def check_auth(request: Request):
-    token = request.cookies.get("access_token")
     try:
-        verify_token(token)
-        return {"status": "authenticated"}
+        verify_token(request)
+        return {"status": "authorized"}
     except HTTPException:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 @router.post("/upload-excel/")
 async def upload_excel(file: UploadFile = File(...), request: Request = None):
