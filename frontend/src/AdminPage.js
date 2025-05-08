@@ -1,77 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminUploadPanel from "./AdminUploadPanel";
 
-function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
+const AdminPage = () => {
+  const navigate = useNavigate();
 
-  const checkAuth = async () => {
-    const response = await fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/check-auth", {
-      credentials: "include",
-    });
-
-    if (response.ok) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
-  };
-
+  // بررسی وضعیت لاگین با توکن ذخیره‌شده در کوکی (HttpOnly)
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const handleLogin = async () => {
-    const formData = new FormData();
-    formData.append("password", password);
-
-    const response = await fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/login", {
-      method: "POST",
-      body: formData,
-      credentials: "include", // very important for HttpOnly cookie
-    });
-
-    if (response.ok) {
-      setIsAuthenticated(true);
-      setLoginError("");
-    } else {
-      const data = await response.json();
-      setLoginError(data.detail || "Login failed");
-    }
-  };
-
-  const handleLogout = async () => {
-    await fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    setIsAuthenticated(false);
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div>
-        <h2>Admin Login</h2>
-        <input
-          type="password"
-          value={password}
-          placeholder="Enter password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button onClick={handleLogin}>Login</button>
-        {loginError && <p style={{ color: "red" }}>{loginError}</p>}
-      </div>
-    );
-  }
+    fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/check-auth", {
+      method: "GET",
+      credentials: "include", // مهم: برای ارسال کوکی
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          navigate("/admin-login");
+        }
+      })
+      .catch((err) => {
+        console.error("Auth check failed", err);
+        navigate("/admin-login");
+      });
+  }, [navigate]);
 
   return (
-    <div>
-      <h2>Welcome, Admin</h2>
-      <button onClick={handleLogout}>Logout</button>
+    <div style={{ padding: "20px" }}>
+      <h2>Admin Panel</h2>
       <AdminUploadPanel />
     </div>
   );
-}
+};
 
 export default AdminPage;
