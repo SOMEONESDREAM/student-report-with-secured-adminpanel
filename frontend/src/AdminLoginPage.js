@@ -1,43 +1,55 @@
 import React, { useState } from "react";
-import axios from "axios";
 
-function AdminLoginPage({ onLoginSuccess }) {
+function AdminLoginPanel({ onLoginSuccess }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
     try {
-      const response = await axios.post(
-        "https://student-report-with-secured-adminpanel.onrender.com/login/",
-        new URLSearchParams({ password })
-      );
-      const token = response.data.access_token;
-      localStorage.setItem("admin_token", token);
-      onLoginSuccess();
+      const response = await fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",  // این مهم است: اجازه می‌دهد کوکی دریافت شود
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.ok) {
+        onLoginSuccess(); // هدایت به صفحه آپلود یا هر اقدامی
+      } else {
+        const data = await response.json();
+        setError(data.detail || "ورود ناموفق بود");
+      }
     } catch (err) {
-      setError("رمز عبور اشتباه است.");
+      setError("خطایی در ارتباط با سرور رخ داد");
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-2xl mb-4">ورود به پنل ادمین</h1>
-      <input
-        type="password"
-        placeholder="رمز عبور"
-        className="p-2 border rounded mb-2 w-64"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button
-        onClick={handleLogin}
-        className="p-2 bg-blue-500 text-white rounded w-64"
-      >
-        ورود
-      </button>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+    <div className="max-w-sm mx-auto mt-20 p-6 bg-white rounded shadow">
+      <h2 className="text-2xl mb-4 text-center">ورود مدیر</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="password"
+          placeholder="رمز عبور"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-4 py-2 mb-4 border rounded"
+        />
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          ورود
+        </button>
+      </form>
     </div>
   );
 }
 
-export default AdminLoginPage;
+export default AdminLoginPanel;
