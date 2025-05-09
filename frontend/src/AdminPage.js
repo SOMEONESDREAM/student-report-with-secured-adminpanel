@@ -29,9 +29,9 @@ const AdminPage = () => {
       method: "POST",
       credentials: "include",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
-      body: new URLSearchParams({ password }),
+      body: JSON.stringify({ password }),
     })
       .then((res) => {
         if (res.ok) {
