@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status
 from fastapi.responses import JSONResponse
-from .auth import verify_token  # توکنی که در کوکی است را بررسی می‌کند
+from auth import verify_token  # توکنی که در کوکی است را بررسی می‌کند
 import shutil
 import os
 
