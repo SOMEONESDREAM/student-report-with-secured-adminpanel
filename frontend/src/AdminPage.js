@@ -25,7 +25,7 @@ const AdminPage = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/login/", {
+    fetch("https://student-report-with-secured-adminpanel.onrender.com/admin/login", {
       method: "POST",
       credentials: "include",
       headers: {
