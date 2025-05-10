@@ -52,3 +52,8 @@ async def upload_images(file: UploadFile = File(...), user=Depends(verify_token)
         return JSONResponse(content={"message": "فایل تصاویر با موفقیت آپلود شد"})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# ✅ check-auth endpoint
+@router.get("/check-auth")
+async def check_auth(user=Depends(verify_token)):
+    return {"status": "ok"}
