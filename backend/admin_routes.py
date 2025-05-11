@@ -21,7 +21,7 @@ async def login(request: Request):
     token = create_access_token({"role": "admin"})
 
     response = JSONResponse(content={"message": "ورود موفقیت‌آمیز بود"})
-    response.set_cookie(key="admin_token", value=token, httponly=True, secure=True)
+    response.set_cookie(key="admin_token", value=token, httponly=True, secure=True, samesite="none",)
     return response
 
 # ✅ check-auth endpoint — برای بررسی وضعیت لاگین
