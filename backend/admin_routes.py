@@ -4,7 +4,7 @@ from auth import verify_token, create_access_token
 import shutil
 import os
 
-router = APIRouter(prefix="/admin")
+router = APIRouter()
 
 UPLOAD_DIR = "uploads"
 
