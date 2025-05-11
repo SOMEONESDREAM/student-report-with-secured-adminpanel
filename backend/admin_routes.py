@@ -3,9 +3,6 @@ from fastapi.responses import JSONResponse
 from auth import verify_token, create_access_token
 import shutil
 import os
-import os
-from auth import verify_token
-
 
 router = APIRouter(prefix="/admin")
 
@@ -26,6 +23,11 @@ async def login(request: Request):
     response = JSONResponse(content={"message": "ورود موفقیت‌آمیز بود"})
     response.set_cookie(key="admin_token", value=token, httponly=True, secure=True)
     return response
+
+# ✅ check-auth endpoint — برای بررسی وضعیت لاگین
+@router.get("/check-auth")
+async def check_auth(user=Depends(verify_token)):
+    return {"message": "Authenticated"}
 
 # ✅ upload excel
 @router.post("/upload-excel")
@@ -54,8 +56,3 @@ async def upload_images(file: UploadFile = File(...), user=Depends(verify_token)
         return JSONResponse(content={"message": "فایل تصاویر با موفقیت آپلود شد"})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-# ✅ check-auth endpoint
-@router.get("/check-auth")
-async def check_auth(user=Depends(verify_token)):
-    return {"status": "ok"}
